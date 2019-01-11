@@ -1,7 +1,8 @@
 import numpy as np 
 import gzip
-import pickle
+import cPickle as pickle
 from geom_score import *
+from utils import *
 '''
 BATCH_SIZE = 100
 train_num =50000
@@ -20,14 +21,22 @@ def gene():
 fake_gen = gene()
 fake_lable = classifier(BATCH_SIZE,train_gen,test_gen,fake_gen)
 '''
-with gzip.open('../tflib/tmp/mnist.pkl.gz', 'rb') as f:
-	train_data, dev_data, test_data = pickle.load(f,encoding='latin1')
+
+
+
+
+
+
+'''
+with gzip.open('save/mnist.pkl.gz', 'rb') as f:
+	train_data, dev_data, test_data = pickle.load(f)
 real_image,_ = train_data
-gene_image = np.loadtxt('./save/generate3999.txt')
+#gene_image = np.loadtxt('./save/generate3999.txt')
 
 real_image = real_image[:1000]
-gene_image = gene_image[:1000]
+gene_image = real_image[:1000]
 
 rlts1 = rlts(real_image)
 rlts2 = rlts(gene_image)
-print(geom_score(rlts1,rlts2))
+print geom_score(rlts1,rlts2)
+'''
