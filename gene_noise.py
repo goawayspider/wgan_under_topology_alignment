@@ -63,7 +63,9 @@ class Gene_noise():
 		#print(self.graph)
 
 
-	def get_noise(self,noise_num):
+	def get_noise(self,noise_num=None):
+		if noise_num is None:
+			noise_num = self.land_mark_num
 		noise = []
 		point_id = np.random.choice(self.land_mark_num,1)[0]
 		for i in range(noise_num):
@@ -71,6 +73,7 @@ class Gene_noise():
 			noise.append(self.simplexs[simplex_id].sample())
 
 			point_id = np.random.choice(self.land_mark_num,1,True,self.graph[point_id])[0]
+		noise = np.array(noise)
 
 		return noise
 
