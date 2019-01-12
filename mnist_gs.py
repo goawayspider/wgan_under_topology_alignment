@@ -12,12 +12,12 @@ import threading
 import datetime
 store = True
 store_path = "mnist_{}.npy"
-
+img_num = 10000
 def reduce_dim(data,noise_dim):
     images,_ = data
 
     np.random.shuffle(images)
-    images = images[:6000]
+    images = images[:img_num]
  
     #emb image_num * noise_dim
     emb = manifold.Isomap(n_neighbors=5, n_components=noise_dim, n_jobs = 10).fit_transform(images)
@@ -29,11 +29,11 @@ def reduce_dim(data,noise_dim):
 
     return images,emb
 
-_noise_num = 10000
-_kappa = 0.5 # to control the threshold to construct the cech complex
+_noise_num = 20000
+_kappa = 0.3 # to control the threshold to construct the cech complex
 tp = datetime.datetime.now().isoformat()
+rep = 1000
 
-img_path = "save/{}_{}_{}.png".format(tp, _noise_num, _kappa)
 
 
 
@@ -53,14 +53,14 @@ noise = Gene_noise(emb,kappa = _kappa).get_noise(noise_num = _noise_num)
 gaussi_noise = np.random.normal(0,1,(3000,20))
 
 def store_rlts(data, arr, index, n_job):
-    out = rlts_pooled(data, n = 100, n_jobs = n_job)
+    out = rlts_pooled(data, n = rep, n_jobs = n_job)
     arr[index] = out
     
 
 
 data_parts = [image, emb, noise, gaussi_noise]
 names = ["raw", "mfd", "noise", "gaussian"]
-TOTAL = 100
+TOTAL = 20
 n_jobs= [0.2, 0.2, 0.5, 0.1]
 rlts_arr = [None] * len(data_parts)
 
@@ -77,9 +77,10 @@ for i in range(len(data_parts)):
     threads[i].join()
 
 
-
+geom_scores = []
 for i in range(1, len(data_parts)):
-    print("{}=={} = {}".format(names[0], names[i] ,geom_score(rlts_arr[0], rlts_arr[i])))
+    geom_scores.append(geom_score(rlts_arr[0], rlts_arr[i]))
+    print("{}=={} = {}".format(names[0], names[i] ,geom_scores[-1]))
 
 colors = ['b', 'r', 'y', 'c']
 
@@ -87,6 +88,8 @@ for i in range(len(data_parts)):
     mrlt = np.mean(rlts_arr[i], axis=0)
     fancy_plot(mrlt, colors[i])
 
+
+img_path = "save/{}_{}_{}_{}#{}#{}.png".format(tp, _noise_num, _kappa, rep, round(geom_scores[1], 5), round(geom_scores[2], 5))
 plt.savefig(img_path)
 
 
