@@ -3,7 +3,8 @@ from __future__ import print_function
 from utils import relative
 from utils import witness
 import numpy as np
-
+from multiprocessing import Pool
+import threading
 
 def rlt(X, L_0=64, gamma=None, i_max=100):
     """
@@ -49,9 +50,25 @@ def rlts(X, L_0=64, gamma=None, i_max=100, n=1000):
     for i in range(n):
         rlts[i, :] = rlt(X, L_0, gamma, i_max)
         if i % 10 == 0:
-            print('Done {}/{}'.format(i, n))
+            print('Thread: {} Done {}/{}'.format(threading.currentThread().getName(), i, n))
     return rlts
 
+
+
+def rlts_pooled(X, L_0 = 64, gamma=None, i_max = 100, n = 100, n_jobs = 16):
+    rlts = np.zeros((n, i_max))
+    pool = Pool(processes = n_jobs)
+
+    for i in range(n):
+        rlts[i, :] = pool.apply(rlt, args = (X, L_0, gamma, i_max))
+        if i % 100 == 0:
+            print('Thread: {} Done {}/{}'.format(threading.currentThread().getName(), i, n))
+    pool.close()
+    pool.join()
+    print("======================== {} FINISHED ===========================".format(threading.currentThread().getName()))
+    return rlts
+    
+    
 
 def geom_score(rlts1, rlts2):
     """
