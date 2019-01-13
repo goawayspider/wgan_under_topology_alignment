@@ -30,7 +30,7 @@ class Point():
 
 
 class Gene_noise():
-	def __init__(self,data,alpha=None,skeleton_dimension=2,land_mark_num=None):
+	def __init__(self,data,alpha=None,skeleton_dimension=1,land_mark_num=None, kappa=0.5):
 		'''
 		Generates simplicial complex, save the connections between the points and simplexs, as well as 
 		the connected graph
@@ -49,7 +49,7 @@ class Gene_noise():
 		lmrk_tab, max_dist = lmrk_table(W, self.L)
 		if alpha is None:
 			gamma = 1.0 / 128 * data.shape[0] / 5000
-			alpha = max_dist * gamma
+			alpha = kappa * max_dist * gamma
 
 		wc = gudhi.WitnessComplex(lmrk_tab)
 		st = wc.create_simplex_tree(max_alpha_square=alpha, limit_dimension=skeleton_dimension)
