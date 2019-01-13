@@ -30,7 +30,7 @@ class Point():
 
 
 class Gene_noise():
-	def __init__(self,data,alpha=None,skeleton_dimension=2,land_mark_num=None, kappa=0.5):
+	def __init__(self,data,alpha=None,skeleton_dimension=1,land_mark_num=None, kappa=0.5):
 		'''
 		Generates simplicial complex, save the connections between the points and simplexs, as well as 
 		the connected graph
